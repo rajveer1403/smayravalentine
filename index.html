@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -19,8 +19,8 @@
       overflow: hidden;
     }
 
-    .card {
-      background: rgba(255, 255, 255, 0.15);
+    .screen {
+      background: rgba(255,255,255,0.15);
       backdrop-filter: blur(10px);
       border-radius: 24px;
       padding: 40px 30px;
@@ -28,34 +28,20 @@
       max-width: 420px;
       width: 90%;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      z-index: 2;
     }
 
-    h1 {
-      font-family: 'Pacifico', cursive;
-      font-size: 2.6rem;
-      margin-bottom: 10px;
-    }
+    h1 { font-family: 'Pacifico', cursive; font-size: 2.6rem; }
+    p { font-size: 1.05rem; line-height: 1.6; }
 
-    p {
-      font-size: 1.05rem;
-      line-height: 1.6;
-      margin-bottom: 25px;
+    input {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      width: 100%;
+      font-size: 1rem;
+      margin-top: 10px;
     }
-
-    .heart {
-      font-size: 4rem;
-      cursor: pointer;
-      animation: pulse 1.5s infinite;
-      user-select: none;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-      100% { transform: scale(1); }
-    }
-
-    .hidden { display: none; }
 
     button {
       background: #ff4d6d;
@@ -65,47 +51,142 @@
       color: #fff;
       font-size: 1rem;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      margin: 10px;
     }
 
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    .heart { font-size: 4rem; cursor: pointer; animation: pulse 1.5s infinite; }
+    .no-btn { position: relative; }
+    .hidden { display: none; }
+
+    .gallery img {
+      width: 90px;
+      height: 90px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin: 5px;
     }
+
+    .caption { font-size: 0.75rem; opacity: 0.85; }
+
+    .floating-hearts span {
+      position: fixed;
+      bottom: -10vh;
+      animation: floatUp 8s linear infinite;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    @keyframes pulse { 0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)} }
+    @keyframes floatUp { from{transform:translateY(0)} to{transform:translateY(-110vh)} }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Hi Smayra ❤️</h1>
-    <p>
-      Every time I think of you, my day gets a little brighter.
-      This tiny website is just a small way of saying how special you are to me.
-    </p>
 
-    <div class="heart" onclick="reveal()">❤️</div>
+<div class="floating-hearts"></div>
 
-    <div id="message" class="hidden">
-      <p>Will you be my Valentine?</p>
-      <button onclick="yesClicked()">Yes 💖</button>
+<!-- LOCK SCREEN -->
+<div id="lock" class="screen">
+  <h1>For Smayra ❤️</h1>
+  <p>This page is locked.</p>
+  <p><em>Only you should open this.</em></p>
+  <input type="password" id="pwd" placeholder="Enter password" />
+  <button onclick="unlock()">Unlock 💖</button>
+  <p id="error" style="color:#ffd1d1;"></p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main" class="screen hidden">
+  <h1>Hi Smayra ❤️</h1>
+  <p>
+    I don’t know how to put this perfectly into words, but I know this —
+    that my day feels incomplete without talking to you.
+    You’re special to me in ways I can’t explain it.
+  </p>
+
+  <div class="heart" onclick="reveal()">❤️</div>
+
+  <div id="question" class="hidden">
+    <p>Will you be my Valentine?</p>
+    <button onclick="yesClicked()">Yes 💖</button>
+    <button class="no-btn" onmouseover="moveNo(this)">No 🙈</button>
+  </div>
+
+  <div class="gallery">
+    <div>
+      <img src="image1.jpg" />
+      <div class="caption">A moment I’ll always remember</div>
+    </div>
+    <div>
+      <img src="image2.jpg" />
+      <div class="caption">One of my favorite memories</div>
+    </div>
+    <div>
+      <img src="image3.jpg" />
+      <div class="caption">Still makes me smile</div>
     </div>
   </div>
 
-  <script>
-    function reveal() {
-      document.getElementById('message').classList.remove('hidden');
-    }
+  <p style="margin-top:15px;font-style:italic;">— From Rajveer ❤️</p>
+</div>
 
-    function yesClicked() {
-      document.body.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;color:white;font-family:Poppins, sans-serif;">
-          <div>
-            <h1 style="font-family:Pacifico,cursive;font-size:3rem;">Yay! 💕</h1>
-            <p style="font-size:1.2rem;">You just made me the happiest person ever, Smayra.</p>
-            <p style="font-size:1.1rem;">Happy Valentine’s Day ❤️</p>
-          </div>
-        </div>
-      `;
+<script>
+  const PASSWORD = 'kapooran';
+
+  function unlock() {
+    const val = document.getElementById('pwd').value;
+    if (val === PASSWORD) {
+      document.getElementById('lock').classList.add('hidden');
+      document.getElementById('main').classList.remove('hidden');
+    } else {
+      document.getElementById('error').innerText = 'Wrong password 💔';
     }
-  </script>
+  }
+
+  // floating hearts
+  const container = document.querySelector('.floating-hearts');
+  for (let i = 0; i < 25; i++) {
+    const h = document.createElement('span');
+    h.textContent = '❤️';
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDelay = Math.random() * 5 + 's';
+    h.style.fontSize = 12 + Math.random() * 24 + 'px';
+    container.appendChild(h);
+  }
+
+  function reveal() {
+    document.getElementById('question').classList.remove('hidden');
+  }
+
+  function moveNo(btn) {
+    btn.style.left = Math.random() * 200 - 100 + 'px';
+    btn.style.top = Math.random() * 200 - 100 + 'px';
+  }
+
+  function yesClicked() {
+    confetti();
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;color:white;font-family:Poppins, sans-serif;">
+        <div>
+          <h1 style="font-family:Pacifico,cursive;font-size:3rem;">Yayyy 💕</h1>
+          <p style="font-size:1.2rem;">You just made me the happiest person today.</p>
+          <p>I’m really glad it’s you ❤️</p>
+        </div>
+      </div>`;
+  }
+
+  function confetti() {
+    for (let i = 0; i < 150; i++) {
+      const c = document.createElement('span');
+      c.textContent = '💖';
+      c.style.position = 'fixed';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = '-5vh';
+      c.style.fontSize = '18px';
+      c.style.animation = 'floatUp 3s linear';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }
+  }
+</script>
 </body>
 </html>
